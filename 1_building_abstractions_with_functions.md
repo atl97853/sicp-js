@@ -59,3 +59,15 @@ function square(x) {
 - The purpose of the substitution is to help us think about function application, no to provide a description of how the interpreter really works. (Reference to chapters 3 and 4).
 - **Applicative order evaluation**: the interpreter first evaluates the function and argument expressions, then applies the resulting function to the resulting arguments. (JavaScript uses this order) (p. 12).
 - **Normal order evaluation**: substitute the argument expressions for the function’s parameters and continue expanding function applications without evaluating those arguments; once the expression involves only operators and primitive functions, evaluate it, computing argument values when they are needed. This is an alternative evaluation model (p. 12).
+
+### 1.1.6 Conditional Expressions and Predicates
+- **The general form of a conditional expression is**: `predicate` `? consequent-expression` `: alternative-expression` (p. 14).
+- **The predicate**: is an expression whose value is either `true` or `false`.
+- **Primitive predicates**: `>=`, `>`, `<`, `<=`, `===`, and `!==` (p. 15).
+- **Compound predicates** can be formed using **logical composition operations**:
+```
+- expression1 && expression2 -> logical conjunction.
+- expression1 || expression2 -> logical disjunction.
+- ! expression -> logical negation.
+&& and || are syntatic forms, not operators; their right-hand expression is not always evaluated (p. 15).
+```
