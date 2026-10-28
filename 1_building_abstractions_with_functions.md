@@ -13,7 +13,7 @@
 - **Infix notation**: the convention of placing the operator between its operands.
 - The interpreter runs in a **reads-evaluate-print loop**: even with complex expressions, **the interpreter** always operates in the same basic cycle: **It reads a statement typed by the user** -> **evaluates the statement**, -> **and prints the result** (p. 5).
 ---
-Summary:
+📚 Summary:
 - **Numbers and arithmetic operations are primitive data and functions.** (p. 8)
 - **Nesting of combinations provides a means of combining operations.** (p. 8)
 - **Constant declarations that associate names** [`12m3m`] **with values provide a limited means of abstraction.** (p. 8)
@@ -30,10 +30,10 @@ const circumference = 2 * pi * radius; // name-object association (compound oper
 - **The program environment**: is the interpreter’s memory of name–object associations [`13q4q`]. 
 
 ### 1.1.3 Evaluating Operator Combinations
-- **To evaluate an operator combination**: first evaluate its operand expressions, then apply the function denoted by the operator to their resulting values (p. 6).
+- **To evaluate an operator combination**: first evaluate its operand expressions, then apply the function denoted by the operator to their resulting values (p. 6). 📖
 - The key point is the **role of the environment** in determining the meaning of the names in expressions; the general notion of the environment as providing a context in which evaluation takes place will play an important role in our understanding of program execution (p. 8).
 ---
-Summary [`11b2b`]:
+📚 Summary [`11b2b`]:
 - **Compound expression:** An expression containing other expressions as parts, such as `5 * 5` (or `square(5)`).
 - **Operator combination:** A particular kind of compound expression with an operator between its operands, such as `5 * 5`.
 - **Compound operation:** A computation defined using simpler operations, such as squaring a number by multiplying it by itself (`x * x`) [`14d5d`].
@@ -50,3 +50,7 @@ function square(x) {
 // The thing to be multiplied is given *a local name* -> *x*.
 ```
 - **Function applications**: are after **operator combinations** the **second kind of combination of expressions** *into* **larger expressions** that we encounter. The general form of a function application is -> `function-expression(argument-expressions)` (p. 9).
+- **The function-expression** of the application specifies the function to be applied to the `argument-expressions`.
+- **Evaluating a function application:** First evaluate its function expression and argument expressions. Then apply the resulting function to the values of the argument expressions (p. 9). 📖
+- The body of a function can be **a sequence of statements**. **The interpreter** evaluates each statement in the sequence in turn until a return statement determines the value of the **function application** (p. 9).
+- **Function application expressions** can also serve as **argument expressions**.
