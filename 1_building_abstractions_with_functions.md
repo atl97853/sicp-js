@@ -54,3 +54,8 @@ function square(x) {
 - **Evaluating a function application:** First evaluate its function expression and argument expressions. Then apply the resulting function to the values of the argument expressions (p. 9). 📖
 - The body of a function can be **a sequence of statements**. **The interpreter** evaluates each statement in the sequence in turn until a return statement determines the value of the **function application** (p. 9).
 - **Function application expressions** can also serve as **argument expressions**.
+
+### 1.1.5 The substitution Model for Function Application
+- The purpose of the substitution is to help us think about function application, no to provide a description of how the interpreter really works. (Reference to chapters 3 and 4).
+- **Applicative order evaluation**: the interpreter first evaluates the function and argument expressions, then applies the resulting function to the resulting arguments. (JavaScript uses this order) (p. 12).
+- **Normal order evaluation**: substitute the argument expressions for the function’s parameters and continue expanding function applications without evaluating those arguments; once the expression involves only operators and primitive functions, evaluate it, computing argument values when they are needed. This is an alternative evaluation model (p. 12).
