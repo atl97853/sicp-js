@@ -154,3 +154,13 @@ add_three(5); // 8
 **Scope describes where a binding applies; an environment records name–value bindings during evaluation.** Further explanation: *Composing Programs*, [§1.3, “Local Names”](https://composingprograms.com/3ed/defining-new-functions/); nested-function examples: [§1.6, “Lexical Scope”](https://composingprograms.com/3ed/higher-order-functions/).
 
 > **Key connection:** black-box abstraction hides implementation details; block structure keeps helper names local; lexical scoping lets those helpers share enclosing bindings.
+
+---
+📚 Summary:
+- **Functional abstraction:** use a function as a reusable black box, relying on what it computes without needing to know its implementation. ([pp. 22–23](https://sicp.sourceacademy.org/sicpjs.pdf#page=54))
+- Functional abstraction: hide internal computational details of a function or task, focus only on its inputs, outputs, and overall purpose.
+- **Bound and free names:** bound names are declared locally; free names refer to enclosing bindings. This distinction is relative to the function being considered. ([pp. 24–25](https://sicp.sourceacademy.org/sicpjs.pdf#page=56))
+- **Scope and local names:** scope determines where a binding applies. Consistently renaming a parameter and its references preserves behavior if no name conflicts are introduced. ([pp. 23–24](https://sicp.sourceacademy.org/sicpjs.pdf#page=55))
+- **Block structure:** keep helper declarations local by nesting them inside functions or blocks. ([pp. 25–26](https://sicp.sourceacademy.org/sicpjs.pdf#page=57))
+- **Lexical scoping:** resolve free names in the environment where the function was declared, allowing nested functions to use enclosing bindings. ([p. 25, footnote 25](https://sicp.sourceacademy.org/sicpjs.pdf#page=57))
+---
