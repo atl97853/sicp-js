@@ -37,6 +37,8 @@ The **two parts of the system** are:
 
 **Wishful thinking:** design the operations **as if the required constructor and selectors already existed**, specifying what they must do before deciding how to implement them. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
 
+> **Wishful thinking** is a **top-down design technique**: write high-level code assuming the helper functions you need already exist, then implement them later. It uses [**functional abstraction**](https://github.com/atl97853/sicp-js/blob/main/1_building_abstractions_with_functions.md#118-functions-as-black-box-abstractions) to treat those helpers as **black boxes with specified behavior**. Here, the **constructor and selectors** provide **data abstraction** by separating operations on rational numbers from their concrete representation.
+
 | Interface function | Required behavior |
 | --- | --- |
 | **`make_rat(n, d)`** — constructor | Construct a rational number with value `n/d`. |
@@ -116,7 +118,7 @@ The simple constructor would produce `6/9`; the reducing constructor produces `2
 
 ---
 
-📚 **Recognition cues:**
+📚 **Summary:**
 
 - **Compound data:** combine parts into a **single conceptual unit**.
 - **Data abstraction:** separate **how data is used** from **how it is represented**.
