@@ -1,53 +1,68 @@
 # 2 Building Abstractions with Data
 
-[Read the chapter introduction](https://sourceacademy.org/sicpjs/2). Page links use **printed book numbers**.
-
-| Key concept | Meaning | Reference |
-| --- | --- | --- |
-| **Compound data** | Data objects combined into a **single conceptual unit**, such as a numerator and denominator forming one rational number. | [pp. 69–70](https://sicp.sourceacademy.org/sicpjs.pdf#page=101) |
-| **Appropriate manipulations** | Operations with the required meaning for the data being used. A client needs to know what `add` and `mul` do, without knowing how their arguments are represented. | [p. 70](https://sicp.sourceacademy.org/sicpjs.pdf#page=102) |
-| **Closure of combination** | Results of a combination operation can themselves be components in further combinations, such as pairs containing pairs. | [p. 71](https://sicp.sourceacademy.org/sicpjs.pdf#page=103) |
-
-**Why manipulate compound objects directly?** Functions can receive and return whole objects instead of tracking separate components and their relationships. This raises the conceptual level, improves modularity, and increases expressive power. [pp. 69–71](https://sicp.sourceacademy.org/sicpjs.pdf#page=101)
+- **Primitive data:** basic building blocks; here, numbers. **Compound data:** objects formed by combining data objects into a **single conceptual unit**, such as a rational number containing a numerator and denominator. [pp. 69–70](https://sicp.sourceacademy.org/sicpjs.pdf#page=101)
+- **Closure of combination:** compound objects can themselves be components of further combinations. This lets simple building blocks form increasingly complex structures. [p. 71](https://sicp.sourceacademy.org/sicpjs.pdf#page=103)
 
 ## 2.1 Introduction to Data Abstraction
 
-[Read online](https://sourceacademy.org/sicpjs/2.1) · [PDF: p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+[Read online](https://sourceacademy.org/sicpjs/2.1)
 
-**Data abstraction:** a methodology that **isolates how a compound data object is used from how it is constructed from more primitive data objects**. This parallels functional abstraction: separate **use** from **implementation**. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+**Data abstraction:** a methodology that **isolates how a compound data object is used from the details of how it is constructed from more primitive data objects**. Like functional abstraction, it separates **use from implementation**. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
 
-The **two parts of the system** are:
+The core idea:
 
-| Part | Responsibility | Rational-number example |
-| --- | --- | --- |
-| **Client / use part** | Operates on **abstract data** through the promised interface. | `add_rat` uses `make_rat`, `numer`, and `denom`. |
-| **Representation / implementation part** | Chooses a **concrete representation** and implements that interface. | Store the numerator first and denominator second in a pair; implement the constructor and selectors accordingly. |
+1. **Operate on “abstract data”:** structure programs that use **compound data objects** so that they make **no assumptions about the data that are not strictly necessary for performing the task at hand**.
 
-- **Abstract data:** data understood through its meaning and supported operations, independently of its storage layout.
-- **Concrete representation:** the chosen lower-level encoding—for example, a pair whose first component is the numerator and second component is the denominator.
-- **Interface:** a **set of functions—constructors and selectors**—connecting the two parts. A **constructor** builds an object; a **selector** extracts a component.
+2. **Define a “concrete” data representation independently:** specify how compound data objects are constructed from **more primitive data objects**, independently of the programs that use them.
 
-**No unnecessary assumptions:** clients rely on the interface’s promised behavior, rather than the storage layout or field order. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+3. **Connect the two parts through a set of functions:** functions called **selectors and constructors** implement the **abstract data in terms of the concrete representation**. **Constructors** build compound data objects; **selectors** retrieve their parts.
 
-### 2.1.1 Example: Arithmetic Operations for Rational Numbers
+Reference: [§2.1, p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104).
 
-[Read online](https://sourceacademy.org/sicpjs/2.1.1) · [PDF: pp. 72–75](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+## 2.1.1 Example: Arithmetic Operations for Rational Numbers
 
-**Rational number:** a value expressible as `n/d`, where `n` and `d` are integers and **`d ≠ 0`**.
+[Read online](https://sourceacademy.org/sicpjs/2.1.1)
 
-**Wishful thinking:** design the operations **as if the required constructor and selectors already existed**, specifying what they must do before deciding how to implement them. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+**Rational number:** a value expressible as **`n/d`**, where `n` and `d` are integers and **`d ≠ 0`**. [pp. 72–73](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+
+**Wishful thinking:** a **strategy of synthesis**: assume the constructor `make_rat` and selectors `numer` and `denom` already exist, then define arithmetic operations in terms of them **before deciding how they are implemented**. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
 
 > **Wishful thinking** is a **top-down design technique**: write high-level code assuming the helper functions you need already exist, then implement them later. It uses [**functional abstraction**](https://github.com/atl97853/sicp-js/blob/main/1_building_abstractions_with_functions.md#118-functions-as-black-box-abstractions) to treat those helpers as **black boxes with specified behavior**. Here, the **constructor and selectors** provide **data abstraction** by separating operations on rational numbers from their concrete representation.
 
-| Interface function | Required behavior |
+### Pairs
+
+**Pair:** a **compound structure** constructed using the primitive function **`pair`**. This function takes **two arguments** and returns **one compound data object containing them as parts**. [p. 73](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
+
+| Primitive function | Role |
 | --- | --- |
-| **`make_rat(n, d)`** — constructor | Construct a rational number with value `n/d`. |
-| **`numer(x)`** — selector | Return the numerator of rational number `x`. |
-| **`denom(x)`** — selector | Return its denominator. |
+| **`pair(a, b)`** | **Constructor:** construct a pair containing `a` and `b`. |
+| **`head(p)`** | **Selector:** extract the first part of pair `p`. |
+| **`tail(p)`** | **Selector:** extract the second part of pair `p`. |
 
-Source: [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104). The constructor preserves the **value** `n/d`; after reduction, selectors need not return the original unreduced integers. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+A pair can be **given a name and manipulated like a primitive data object**. Its parts can themselves be pairs, making pairs **general-purpose building blocks for more complex data structures**. [p. 74](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
 
-For `x = n₁/d₁` and `y = n₂/d₂`, with nonzero denominators:
+**List-structured data:** data objects **constructed from pairs**. The functions `pair`, `head`, and `tail` provide the **“glue”** for constructing and selecting their parts. [p. 74](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
+
+```js
+const nested = pair(pair(1, 2), pair(3, 4));
+head(tail(nested)); // 3: select the second pair, then its first part.
+```
+
+**Environment note:** the book's JavaScript environment supplies these primitive functions. In ordinary JavaScript, a **two-element array** is one possible concrete representation of a pair.
+
+### Representing rational numbers
+
+Represent a rational number as a **pair of two integers**: its **numerator** and **denominator**. The constructor and selectors are then implemented in terms of `pair`, `head`, and `tail`. [p. 74](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
+
+| Function | Required behavior | Initial implementation |
+| --- | --- | --- |
+| **`make_rat(n, d)`** | Construct a rational number with value **`n/d`**. | `return pair(n, d);` |
+| **`numer(x)`** | Select the numerator of rational number `x`. | `return head(x);` |
+| **`denom(x)`** | Select its denominator. | `return tail(x);` |
+
+**`const one_half = make_rat(1, 2);`** associates the name `one_half` with a **compound data object representing the rational number `1/2`**. [pp. 74–75](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
+
+**Arithmetic operations** are defined in terms of the **constructor and selector functions** `make_rat`, `numer`, and `denom`. For `x = n₁/d₁` and `y = n₂/d₂`, with **nonzero denominators**: [p. 73](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
 
 | Operation | Result or test |
 | --- | --- |
@@ -55,72 +70,54 @@ For `x = n₁/d₁` and `y = n₂/d₂`, with nonzero denominators:
 | **`sub_rat(x, y)`** | `(n₁d₂ - n₂d₁)/(d₁d₂)` |
 | **`mul_rat(x, y)`** | `(n₁n₂)/(d₁d₂)` |
 | **`div_rat(x, y)`** | `(n₁d₂)/(d₁n₂)`; requires **`n₂ ≠ 0`**. |
-| **`equal_rat(x, y)`** | `n₁d₂ = n₂d₁`: compare values by cross-multiplication. |
+| **`equal_rat(x, y)`** | **Cross-multiplication:** `n₁ * d₂ === n₂ * d₁`. |
 
-Source: [p. 73](https://sicp.sourceacademy.org/sicpjs.pdf#page=105). For example, addition uses **only the rational-number interface**:
+### Reducing to lowest terms: changing the constructor
 
-```js
-function add_rat(x, y) {
-    return make_rat(numer(x) * denom(y) + numer(y) * denom(x),
-                    denom(x) * denom(y));
-}
-```
+**Lowest terms:** divide the numerator and denominator by their **greatest common divisor (GCD)** before constructing the compound data object. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
 
-#### Pairs: the “Glue” for Compound Data
-
-**Pair:** a compound structure containing **two components**, either of which can itself be a pair. Objects built from pairs are called **list-structured data**. [pp. 73–74](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
-
-| Function | Meaning |
-| --- | --- |
-| **`pair(a, b)`** | Construct a pair with components `a` and `b`. |
-| **`head(p)`** | Select its first component. |
-| **`tail(p)`** | Select its second component, which may itself be a pair. |
-
-The book’s environment supplies these functions. **Your two-element arrays can implement the same pair interface** in ordinary JavaScript:
+**Ordinary JavaScript adaptation:** assume rational numbers already use arrays `[n, d]`, with existing selectors `numer(x)` returning `x[0]` and `denom(x)` returning `x[1]`.
 
 ```js
-const pair = (a, b) => [a, b];
-const head = p => p[0];
-const tail = p => p[1];
+// utils.js
 
-const nested = pair(pair(1, 2), pair(3, 4));
-head(nested);       // [1, 2]
-tail(nested);       // [3, 4]
-head(tail(nested)); // 3
-```
-
-**Arrays implement pairs; pairs represent rational numbers.** Indexing stays inside `head`/`tail`; rational arithmetic uses `numer`/`denom`. Nesting illustrates **closure of combination**. [pp. 71, 74](https://sicp.sourceacademy.org/sicpjs.pdf#page=103)
-
-#### Representing Rational Numbers
-
-The initial representation simply pairs `n` with `d`. To store fractions in **lowest terms**, divide both parts by their **greatest common divisor**. This changes the constructor while preserving the rational-number operations. [pp. 74–75](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
-
-```js
-// Euclid's algorithm from §1.2.5; called here with non-negative inputs.
+/** Returns the GCD of non-negative integers a and b. */
 function gcd(a, b) {
     return b === 0 ? a : gcd(b, a % b);
 }
 
-// Preconditions: integer n and d; d !== 0.
-function make_rat(n, d) {
-    const g = gcd(Math.abs(n), Math.abs(d));
-    return pair(n / g, d / g);
-}
-
-function numer(x) { return head(x); }
-function denom(x) { return tail(x); }
-
-const sum = add_rat(make_rat(1, 3), make_rat(1, 3));
-console.log(numer(sum), denom(sum)); // 2 3
+export default gcd;
 ```
 
-The simple constructor would produce `6/9`; the reducing constructor produces `2/3` using the **same `add_rat`**. Sign normalization is a separate policy addressed in exercise 2.1. [pp. 75–76](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+```js
+// main.js
+import gcd from "./utils.js";
 
----
+/** Constructs n/d in lowest terms; integer inputs, d !== 0. */
+function make_rat(n, d) {
+    const g = gcd(Math.abs(n), Math.abs(d));
+    return [n / g, d / g];
+}
+```
 
-📚 **Summary:**
+For the book's pair representation, the last line is `return pair(n / g, d / g);`.
 
-- **Compound data:** combine parts into a **single conceptual unit**.
-- **Data abstraction:** separate **how data is used** from **how it is represented**.
-- **Wishful thinking:** define operations through an assumed **constructor/selector interface**, then implement it.
-- **Modularity:** improve the representation through that interface while preserving client behavior.
+**Only the constructor's implementation changes:** instead of storing `[n, d]`, it stores `[n / g, d / g]`. **None of the functions that implement the arithmetic operations, such as `add_rat` and `mul_rat`, need to change.** [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+
+| Part | Responsibility |
+| --- | --- |
+| **Set of functions (interface)** | Specify the behavior of `make_rat`, `numer`, and `denom`. |
+| **Implementation** | Define their bodies and the concrete representation; here, `make_rat` uses GCD reduction and an array. |
+| **Use** | Arithmetic functions call the constructor and selectors without needing the details of reduction or storage. |
+
+**Functional abstraction** lets callers use `make_rat` through its specified behavior while suppressing its implementation details. **Data abstraction** isolates how rational numbers are used from how they are constructed and represented. The set of constructor and selector functions connects these two parts. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
+
+The change preserves the **rational value `n/d`**; the selected integers and printed fraction may change. **Sign normalization** is a separate requirement in [Exercise 2.1, p. 76](https://sicp.sourceacademy.org/sicpjs.pdf#page=108).
+
+### JavaScript details
+
+- **Function alias:** `const make_rat = pair;` makes `make_rat` and `pair` **names for the same primitive constructor**. A separately declared `make_rat` calls `pair`, allowing calls to `make_rat` to be traced independently. [p. 74, footnote 2](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
+
+- **Operator overloading:** an operator performs different operations depending on its operands. The book uses **`+` to add two numbers or concatenate two strings**. [p. 75, footnote 3](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+
+- **Printing rational numbers:** `print_rat` uses **`stringify`** to convert the numerator and denominator to strings, **`+`** to combine them with `" / "`, and **`display`** to print the result. In the book's environment, **`display` returns its argument**, which `print_rat` then returns. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
