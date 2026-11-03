@@ -27,21 +27,21 @@ Reference: [§2.1, p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104).
 
 **Wishful thinking:** a **strategy of synthesis**: assume the needed constructors and selectors exist, then define operations using their specified behavior **before implementing them**. [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104)
 
-### Pairs, constructors, and selectors
+### Pairs and rational-number representation
 
-**Pair:** a **compound data object with two parts**, either of which can itself be a pair, as in `pair(1, pair(2, 3))`. **List-structured data** consists of objects constructed from pairs. [pp. 73–74](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
+**Pair:** a **compound data object with two parts**, either of which can itself be a pair. **List-structured data** consists of objects constructed from pairs. [pp. 73–74](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
 
-A rational number is initially represented as a **pair of integers: numerator and denominator**. The book's environment supplies the primitive pair functions below. [p. 74](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
+Initially, a rational number is represented as a **pair of integers: numerator and denominator**. The book’s environment supplies `pair`, `head`, and `tail`. [p. 74](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
 
-| Role | Pair function | Rational-number definition |
-| --- | --- | --- |
-| **Constructor: builds an object** | `pair(a, b)` | `make_rat(n, d)` returns `pair(n, d)`. |
-| **Selector: retrieves the first part** | `head(p)` | `numer(x)` returns `head(x)`. |
-| **Selector: retrieves the second part** | `tail(p)` | `denom(x)` returns `tail(x)`. |
+| Pair operation | Rational-number implementation |
+| --- | --- |
+| **Construct:** `pair(a, b)` | `make_rat(n, d)` returns `pair(n, d)`. |
+| **Select first part:** `head(p)` | `numer(x)` returns `head(x)`. |
+| **Select second part:** `tail(p)` | `denom(x)` returns `tail(x)`. |
 
 ### Rational arithmetic
 
-Operations use the **set of constructor and selector functions**, independently of the concrete representation. For `x = n₁/d₁` and `y = n₂/d₂`, with **nonzero denominators**: [p. 73](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
+Operations use **`make_rat`, `numer`, and `denom`**. For `x = n₁/d₁` and `y = n₂/d₂`, with **nonzero denominators**: [p. 73](https://sicp.sourceacademy.org/sicpjs.pdf#page=105)
 
 | Operation | Result or test |
 | --- | --- |
@@ -50,11 +50,11 @@ Operations use the **set of constructor and selector functions**, independently 
 | **`div_rat`** | `(n₁d₂)/(d₁n₂)`; requires **`n₂ ≠ 0`**. |
 | **`equal_rat`** | **Cross-multiplication:** `n₁ * d₂ === n₂ * d₁`. |
 
-### Lowest terms and abstraction
+### Lowest terms
 
 **Lowest terms:** numerator and denominator have **GCD 1**. Reduce a fraction by dividing both by their **greatest common divisor**. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
 
-For an existing array representation, with `numer(x)` returning `x[0]` and `denom(x)` returning `x[1]`:
+For an existing array representation, where `numer(x)` returns `x[0]` and `denom(x)` returns `x[1]`:
 
 ```js
 import gcd from "./utils.js";
@@ -65,17 +65,52 @@ function make_rat(n, d) {
 }
 ```
 
-**Only `make_rat` changes; arithmetic functions such as `add_rat` and `mul_rat` remain unchanged.** The **rational value is preserved**, although the stored integers and printed fraction may change. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+**Only `make_rat` changes; the arithmetic functions remain unchanged.** The **rational value is preserved**, although the stored integers and printed fraction may change. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
 
-| Concept | Definition |
-| --- | --- |
-| [**Functional abstraction**](https://github.com/atl97853/sicp-js/blob/main/1_building_abstractions_with_functions.md#118-functions-as-black-box-abstractions) | Separate **what a function does** from **how it is implemented**. |
-| **Data abstraction** | Separate **how compound data is used** from **how it is represented**, through a **set of constructors and selectors (the interface)**. |
-
-Reference: [p. 72](https://sicp.sourceacademy.org/sicpjs.pdf#page=104). **Sign normalization** is addressed separately in [Exercise 2.1, p. 76](https://sicp.sourceacademy.org/sicpjs.pdf#page=108).
+**Sign normalization** is addressed separately in [Exercise 2.1, p. 76](https://sicp.sourceacademy.org/sicpjs.pdf#page=108).
 
 ### JavaScript details
 
 - **Function alias:** `const make_rat = pair;` gives two names to **the same function**; a wrapper is a separate function that calls it. [p. 74, footnote 2](https://sicp.sourceacademy.org/sicpjs.pdf#page=106)
-- **Operator overloading:** the same operator has **different meanings for different operand types**; `+` adds numbers or concatenates strings. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
-- **Printing:** `stringify` converts values to strings; `display` prints and returns its argument. `print_rat` combines these to display `numerator / denominator`. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+- **Operator overloading:** an operator has **different meanings for different operand types**; `+` adds numbers or concatenates strings. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+- **Printing:** `print_rat` uses `stringify` to convert values to strings and `display` to print `numerator / denominator`. In the book’s environment, **`display` returns its argument**. [p. 75](https://sicp.sourceacademy.org/sicpjs.pdf#page=107)
+
+### 2.2.1 Abstraction Barriers
+#### Core concepts
+
+| Concept | Meaning |
+| --- | --- |
+| **Data-abstraction principle** | Identify a **basic set of operations** for each **type of data object**, then express all manipulations of objects of that type **using only those operations**. [p. 76](https://sicp.sourceacademy.org/sicpjs.pdf#page=108) |
+| **Data abstraction** | Separate **how data objects are used** from **how they are constructed and represented**. |
+| **Interface** | A **set of functions with specified behavior** through which programs construct, select parts of, and manipulate data objects. |
+| **Implementation** | The function bodies and **concrete representation** that make those operations work, possibly using more primitive data objects. |
+| **Abstraction barrier** | Separates **the programs above, which use the data abstraction**, from **the programs below, which implement it**. |
+
+> **Functions at each level are the interfaces that define the abstraction barriers and connect the different levels.** [p. 76](https://sicp.sourceacademy.org/sicpjs.pdf#page=108)
+
+**Constructors and selectors** implement the **abstract data in terms of its concrete representation**.
+
+**When using an abstraction, you can ignore representation details. When implementing it, you still need to understand those details.** This is the distinction that abstraction barriers establish.
+
+#### Example: rational-number package
+
+| Level | Implemented or manipulated through |
+| --- | --- |
+| **Programs using rational numbers** | The arithmetic functions supplied **for public use** by the rational-number package. |
+| **Arithmetic functions** | The rational-number **constructor and selectors**. |
+| **Constructor and selectors** | **Pairs**. |
+
+The details of **how pairs are implemented are irrelevant to the rest of the rational-number package**.
+
+#### Representation dependence
+
+1. **Multiple representations:** any complex data structure can be **represented in a variety of ways** using the primitive data structures provided by a programming language.
+2. **Effect on programs:** the **choice of representation influences the programs that operate on it**.
+3. **Effect of changes:** if the representation changes later, all such programs might need to be modified accordingly.
+4. **Confining dependence:** this could be time-consuming and expensive in large programs unless **dependence on the representation is confined, by design, to very few program modules**.
+
+#### Advantages
+
+- **Easier maintenance and modification:** programs become much easier to maintain and modify.
+- **Flexibility in design:** **constraining dependence on the representation to a few interface functions** helps us **design programs as well as modify them**, because it preserves the flexibility to consider **alternative implementations**.
+- **Deferred decisions:** the data-abstraction methodology lets us **defer representation decisions without losing the ability to make progress on the rest of the system**.
