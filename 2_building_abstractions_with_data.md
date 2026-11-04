@@ -114,3 +114,103 @@ The details of **how pairs are implemented are irrelevant to the rest of the rat
 - **Easier maintenance and modification:** programs become much easier to maintain and modify.
 - **Flexibility in design:** **constraining dependence on the representation to a few interface functions** helps us **design programs as well as modify them**, because it preserves the flexibility to consider **alternative implementations**.
 - **Deferred decisions:** the data-abstraction methodology lets us **defer representation decisions without losing the ability to make progress on the rest of the system**.
+
+### 2.1.3 What Is Meant by Data?
+
+#### Core idea: data is defined by operations and conditions
+
+**Data can be defined by a collection of constructors and selectors, together with specified conditions these functions must fulfill for a valid representation.** This applies to both **high-level data objects**, such as rational numbers, and **lower-level objects**, such as pairs. [Printed pp. 78–79](https://sicp.sourceacademy.org/sicpjs.pdf#page=110)
+
+| Term | Meaning |
+|---|---|
+| **Constructor** | An operation that creates a compound data object from its components. |
+| **Selector** | An operation that retrieves a component of a compound data object. |
+| **Valid representation** | An implementation whose constructors and selectors satisfy the required conditions. |
+
+Providing functions with the right names is **not enough**: their behavior must satisfy the specification.
+
+For rational numbers, for any integer `n` and nonzero integer `d`, if `r = make_rat(n, d)`, then:
+
+$$
+\frac{\operatorname{numer}(r)}{\operatorname{denom}(r)}
+=
+\frac{n}{d}
+$$
+
+The extracted numerator and denominator need not be the original integers; **their ratio must be the same**. [Printed p. 78](https://sicp.sourceacademy.org/sicpjs.pdf#page=110)
+
+#### The pair condition: a universal conditional statement
+
+A **universal conditional statement** asserts that **for every object under consideration, if a condition holds, then a specified consequence holds**.
+
+For pairs:
+
+> **For any objects `x` and `y`, if `z = pair(x, y)`, then `head(z)` is `x` and `tail(z)` is `y`.**
+
+Equivalently, the following identities must hold **for all `x` and `y`**:
+
+```js
+head(pair(x, y)) // yields x
+tail(pair(x, y)) // yields y
+```
+
+**Any triple of functions satisfying this condition can serve as an implementation of pairs.** The condition specifies the required behavior without fixing the underlying representation. [Printed p. 79](https://sicp.sourceacademy.org/sicpjs.pdf#page=111)
+
+#### Abstract models: formalizing “functions plus conditions”
+
+The **method of abstract models** is one approach to formalizing a **functions-plus-conditions specification**. It defines **new kinds of data objects in terms of previously defined types of data objects**. Assertions about the new objects can therefore be checked by reducing them to assertions about those previously defined objects. [Printed p. 78, footnote 5](https://sicp.sourceacademy.org/sicpjs.pdf#page=110)
+
+For example, the rational-number condition above is expressed using **integers, equality, and division**.
+
+#### Functional representation of pairs
+
+A **functional representation of data** uses functions to represent data objects. In this implementation, **a pair is represented by a function**, rather than by an array or another built-in compound data structure. [Printed pp. 79–80](https://sicp.sourceacademy.org/sicpjs.pdf#page=111)
+
+```js
+function pair(x, y) {
+    function dispatch(m) {
+        return m === 0
+            ? x
+            : m === 1
+                ? y
+                : error(m, "argument not 0 or 1 -- pair");
+    }
+
+    return dispatch;
+}
+
+function head(z) {
+    return z(0);
+}
+
+function tail(z) {
+    return z(1);
+}
+```
+
+*The example uses Source Academy’s `error` function.*
+
+- **`pair(x, y)` returns `dispatch` itself**, not the result of calling it.
+- The returned function **retains access to `x` and `y`**.
+- Calling it with **`0` retrieves `x`**; calling it with **`1` retrieves `y`**.
+
+**Verification of the pair condition:**
+
+```js
+head(pair(x, y)) // calls the returned dispatch with 0, yielding x
+tail(pair(x, y)) // calls the returned dispatch with 1, yielding y
+```
+
+Therefore, this is a **valid representation of pairs**. If clients use only `pair`, `head`, and `tail`, the required pair operations behave the same as with another valid representation. [Printed pp. 79–80](https://sicp.sourceacademy.org/sicpjs.pdf#page=111)
+
+#### Why this matters: compound data and message passing
+
+**The ability to manipulate functions as objects also provides the ability to represent compound data.** The example shows that pairs *could* be implemented this way; it does not claim that the language’s primitive pairs actually use this representation. [Printed p. 80](https://sicp.sourceacademy.org/sicpjs.pdf#page=112)
+
+**Message passing** is a programming style in which an object responds to messages that determine which operation to perform. Here, the function representing a pair receives **`0` or `1` as a message** and returns the corresponding component.
+
+**Functional representations of data** and **message passing** become important tools later in the book, particularly in Chapter 3’s treatment of modeling and simulation. [Printed p. 80](https://sicp.sourceacademy.org/sicpjs.pdf#page=112)
+
+---
+
+**Reference:** [SICP JS, §2.1.3](https://sourceacademy.org/sicpjs/2.1.3), printed pp. 78–80 (PDF pages 110–112).
